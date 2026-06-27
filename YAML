@@ -1,0 +1,88 @@
+openapi: 3.1.0
+info:
+  title: Agente Orquestrador Central de Paulo
+  description: API para rotear solicitações entre agentes especializados de Paulo.
+  version: 1.0.0
+
+servers:
+  - url: https://seudominio.com
+    description: Servidor da API do Orquestrador
+
+paths:
+  /rotear-solicitacao:
+    post:
+      operationId: rotearSolicitacao
+      summary: Roteia uma solicitação para o agente mais adequado
+      description: Identifica o tipo de solicitação do usuário e seleciona o agente especializado mais adequado.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - solicitacao
+              properties:
+                solicitacao:
+                  type: string
+                  description: Pedido feito pelo usuário.
+                contexto:
+                  type: string
+                  description: Contexto adicional da tarefa, se houver.
+      responses:
+        "200":
+          description: Solicitação roteada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  agente_selecionado:
+                    type: string
+                    description: Nome do agente escolhido.
+                  justificativa:
+                    type: string
+                    description: Motivo da escolha do agente.
+                  etapas:
+                    type: array
+                    items:
+                      type: string
+                    description: Etapas recomendadas para executar a tarefa.
+
+  /executar-tarefa:
+    post:
+      operationId: executarTarefa
+      summary: Executa uma tarefa coordenada pelo orquestrador
+      description: Recebe a solicitação, o agente selecionado e as etapas para produzir uma resposta organizada.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - solicitacao
+                - agente
+              properties:
+                solicitacao:
+                  type: string
+                  description: Pedido original do usuário.
+                agente:
+                  type: string
+                  description: Agente responsável pela execução.
+                etapas:
+                  type: array
+                  items:
+                    type: string
+                  description: Etapas de execução da tarefa.
+      responses:
+        "200":
+          description: Tarefa executada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resposta_final:
+                    type: string
+                    description: Resposta final organizada e pronta para uso.
